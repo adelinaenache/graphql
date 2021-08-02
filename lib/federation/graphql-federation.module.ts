@@ -151,7 +151,7 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     const typeDefs =
       (await this.graphqlTypesLoader.mergeTypesByPaths(typePaths)) || [];
 
-    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
+    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs) as string[];
     const apolloOptions = await this.graphqlFederationFactory.mergeOptions({
       ...this.options,
       typeDefs: mergedTypeDefs,

@@ -138,7 +138,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
         this.options.typePaths,
       )) || [];
 
-    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
+    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs) as any[];
     const apolloOptions = await this.graphqlFactory.mergeOptions({
       ...this.options,
       typeDefs: mergedTypeDefs,

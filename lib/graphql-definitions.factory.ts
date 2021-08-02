@@ -49,7 +49,7 @@ export class GraphQLDefinitionsFactory {
         isDebugEnabled,
       );
       const watcher = chokidar.watch(options.typePaths);
-      watcher.on('change', async (file) => {
+      watcher.on('change', async file => {
         this.printMessage(
           `[${new Date().toLocaleTimeString()}] "${file}" has been changed.`,
           isDebugEnabled,
@@ -61,7 +61,7 @@ export class GraphQLDefinitionsFactory {
           isFederation,
           isDebugEnabled,
           definitionsGeneratorOptions,
-          options.typeDefs
+          options.typeDefs,
         );
       });
     }
@@ -72,7 +72,7 @@ export class GraphQLDefinitionsFactory {
       isFederation,
       isDebugEnabled,
       definitionsGeneratorOptions,
-      options.typeDefs
+      options.typeDefs,
     );
   }
 
@@ -83,7 +83,7 @@ export class GraphQLDefinitionsFactory {
     isFederation: boolean,
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions = {},
-    typeDefs?: string | string[]
+    typeDefs?: string | string[],
   ) {
     if (isFederation) {
       return this.exploreAndEmitFederation(
@@ -92,7 +92,7 @@ export class GraphQLDefinitionsFactory {
         outputAs,
         isDebugEnabled,
         definitionsGeneratorOptions,
-        typeDefs
+        typeDefs,
       );
     }
     return this.exploreAndEmitRegular(
@@ -101,7 +101,7 @@ export class GraphQLDefinitionsFactory {
       outputAs,
       isDebugEnabled,
       definitionsGeneratorOptions,
-      typeDefs
+      typeDefs,
     );
   }
 
@@ -111,7 +111,7 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions,
-    typeDefs?: string | string[]
+    typeDefs?: string | string[],
   ) {
     const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
@@ -152,10 +152,12 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions,
-    typeDefs?: string | string[]
+    typeDefs?: string | string[],
   ) {
-    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths  || []);
-    const mergedTypeDefs = extend(typePathDefs, typeDefs);
+    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(
+      typePaths || [],
+    );
+    const mergedTypeDefs = extend(typePathDefs, typeDefs) as any[];
     if (!mergedTypeDefs) {
       throw new Error(`"typeDefs" property cannot be null.`);
     }
