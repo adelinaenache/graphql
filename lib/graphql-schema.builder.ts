@@ -43,6 +43,7 @@ export class GraphQLSchemaBuilder {
         options.transformAutoSchemaFile && options.transformSchema,
       );
     } catch (err) {
+      console.log('Sadge error', resolvers, autoSchemaFile, scalarsMap);
       if (err && err.details) {
         console.error(err.details);
       }

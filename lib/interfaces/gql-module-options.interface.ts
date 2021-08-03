@@ -5,6 +5,7 @@ import { Config, GraphQLExecutor } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
+import { ServerOptions } from 'graphql-ws';
 
 export interface ServerRegistration {
   path?: string;
@@ -16,9 +17,25 @@ export interface ServerRegistration {
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
+export type GraphQLWsSubscriptionsConfig = Partial<
+  Pick<
+    ServerOptions,
+    | 'connectionInitWaitTimeout'
+    | 'onConnect'
+    | 'onDisconnect'
+    | 'onClose'
+    | 'onSubscribe'
+    | 'onNext'
+  >
+>;
+
+export type SubscriptionConfig = {
+  'graphql-ws'?: GraphQLWsSubscriptionsConfig;
+};
+
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 export interface GqlModuleOptions
-  extends Omit<Config, 'typeDefs'>,
+  extends Omit<Config, 'typeDefs' | 'subscriptions'>,
     Partial<
       Pick<
         ServerRegistration,
@@ -39,6 +56,8 @@ export interface GqlModuleOptions
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;
   schemaDirectives?: Record<string, any>;
+  playground?: boolean;
+  subscriptions?: SubscriptionConfig;
   transformSchema?: (
     schema: GraphQLSchema,
   ) => GraphQLSchema | Promise<GraphQLSchema>;

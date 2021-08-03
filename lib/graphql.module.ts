@@ -20,7 +20,9 @@ import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
+  SubscriptionConfig,
 } from './interfaces/gql-module-options.interface';
+import { GraphQLSubscriptionService } from './graphql-ws/graphql-subscription.service';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import {
   PluginsExplorerService,
@@ -51,6 +53,7 @@ import {
 })
 export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   private _apolloServer: ApolloServerBase;
+  private _subscriptionService?: GraphQLSubscriptionService;
 
   get apolloServer(): ApolloServerBase {
     return this._apolloServer;
@@ -154,13 +157,22 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
     await this.registerGqlServer(apolloOptions);
     if (this.options.installSubscriptionHandlers) {
-      this._apolloServer.installSubscriptionHandlers(
+      const subscriptionsOptions: SubscriptionConfig = this.options
+        .subscriptions || { 'graphql-ws': {} };
+      this._subscriptionService = new GraphQLSubscriptionService(
+        {
+          schema: apolloOptions.schema,
+          path: this.options.path,
+          context: this.options.context,
+          ...subscriptionsOptions,
+        },
         httpAdapter.getHttpServer(),
       );
     }
   }
 
   async onModuleDestroy() {
+    await this._subscriptionService?.stop();
     await this._apolloServer?.stop();
   }
 
